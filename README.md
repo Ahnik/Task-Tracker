@@ -10,14 +10,14 @@ JSON file. The user should be able to: <br>
 6. List all tasks that are in progress<br>
 </p>
 
-<h2>Constraints</h2>
+<h1>Constraints</h1>
 <p>
 1. Use positional arguments in command line to accept user inputs.<br>
 2. Use a JSON file to store the tasks in the current directory.<br>
 3. The JSON file should be created if it does not exist.<br>
 </p>
 
-<h3>List of commands and their usage</h3>
+<h1>List of commands and their usage</h1>
 <p>
 # Adding a new task
 task-cli add "Buy groceries"
@@ -40,7 +40,7 @@ task-cli list todo
 task-cli list in-progress
 </p>
 
-<h4>Task Properties</h4>
+<h1>Task Properties</h1>
 <p>
 Each task should have the following properties:<br>
 1. id: A unique identifier for the task<br>
@@ -51,5 +51,5 @@ Each task should have the following properties:<br>
 Make sure to add these properties to the JSON file when adding a new task and update them when updating the task.
 </p>
 
-<h5>Guide</h5>
+<h1>Guide</h1>
 <a href="https://roadmap.sh/projects/task-tracker">https://roadmap.sh/projects/task-tracker</a>
