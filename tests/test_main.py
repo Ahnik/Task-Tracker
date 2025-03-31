@@ -20,16 +20,14 @@ MAIN_PATH = Path("../app/main.py").resolve()
 
 @pytest.fixture(scope="module")
 def setup_1():
-    '''Fixture to set up and tear down a temporary empty tasks.json file.'''
-    # Create an empty temporary tasks.json file 
-    tasks = []
-    
-    with open(TASKS_FILE, 'w') as f:
-        json.dump(tasks, f)
-    
+    '''Fixture to run tests with no tasks.json file and tear down any tasks.json file created afterwards'''
+    # If a tasks.json file exists, remove it
+    if os.path.exists(TASKS_FILE):
+        os.remove(TASKS_FILE)
+        
     yield   # Run the rests
     
-    # Clean up: Remove the task files after tests
+    # Clean up: Remove the task file after tests
     if os.path.exists(TASKS_FILE):
         os.remove(TASKS_FILE)
         
@@ -59,7 +57,7 @@ def setup_2():
         
     yield   # Run the tests
     
-    # Clean up: Remove the task files after tests
+    # Clean up: Remove the task file after tests
     if os.path.exists(TASKS_FILE):
         os.remove(TASKS_FILE)
         
@@ -103,7 +101,7 @@ def setup_3():
         
     yield   # Run the tests
     
-    # Clean up: Remove the task files after tests
+    # Clean up: Remove the task file after tests
     if os.path.exists(TASKS_FILE):
         os.remove(TASKS_FILE)
         
@@ -114,7 +112,7 @@ def run_cli_command(command):
 
 # The following functions are tests for the 'add' command
 def test_add_task_1(setup_1):
-    '''Test for adding a new task when the JSON file is empty'''
+    '''Test for adding a new task when there is no JSON file'''
     command = ['python3', MAIN_PATH, 'add', '"Buy groceries"']
     
     # Run the CLI command
@@ -127,14 +125,17 @@ def test_add_task_1(setup_1):
     assert code == 0
     assert "Task added successfully (ID: 1)\n" in output
     
+    # Verify whether tasks.json file is created
+    assert os.path.exists(TASKS_FILE)
+    
     # Verify the task is added to the JSON file
     with open(TASKS_FILE, 'r') as f:
         tasks = json.load(f)
     
     assert len(tasks) == 1
-    assert tasks[-1]['description'] == 'Buy groceries'
-    assert tasks[-1]['createdAt'] == now
-    assert tasks[-1]['updatedAt'] == now
+    assert tasks[0]['description'] == 'Buy groceries'
+    assert tasks[0]['createdAt'] == now
+    assert tasks[0]['updatedAt'] == now
     
 def test_add_task_2(setup_2):
     '''Test for adding a new task when the JSON file is not empty'''
@@ -258,10 +259,7 @@ def test_delete_task_3(setup_3):
     
     # Run the CLI command
     output, code = run_cli_command(command)
-    
-    # The time at which the task is updated
-    now = datetime.now().strftime()
-    
+
     # Verify the command run was unsuccessful
     assert code != 0
     assert "Task ID 4 successfully deleted\n" in output
@@ -273,3 +271,93 @@ def test_delete_task_3(setup_3):
     assert len(tasks) == 3
     assert not any(item['id'] == 4 for item in tasks)
     
+# The following functions are tests for the 'mark-in-progress' and 'mark-done' commands
+def test_mark_1(setup_1):
+    '''Test for trying to mark a task when there are no tasks added'''
+    # Testing for mark-in-progress
+    command = ['python3', MAIN_PATH, 'mark-in-progress', 1]
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "No tasks have been added yet\n" in output
+    
+    # Testing for mark-done
+    command = ['python3', MAIN_PATH, 'mark-done', 1]
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "No tasks have been added yet\n" in output
+    
+def test_mark_2(setup_3):
+    '''Test for trying to mark a non-existent task from a non-empty tasks.json'''
+    # Testing for mark-in-progress
+    command = ['python3', MAIN_PATH, 'mark-in-progress', 5]
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "Task ID 5 does not exist\n" in output
+    
+    # Testing for mark-done
+    command = ['python3', MAIN_PATH, 'mark-done', 5]
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "Task ID 5 does not exist\n" in output
+    
+def test_mark_3(setup_3):
+    '''Test for trying to mark an existing task'''
+    # Testing for mark-in-progress
+    command = ['python3', MAIN_PATH, 'mark-in-progress', 4]
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # The time when the task was updated
+    now = datetime.now().strftime()
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "Task ID 4 marked 'in-progress' successfully\n" in output
+    
+    # Verify the task was updated
+    with open(TASKS_FILE, 'r') as f:
+        tasks = json.load(f)
+        
+    assert len(tasks) == 4
+    assert tasks[2]['id'] == 4
+    assert tasks[2]['status'] == 'in-progress'
+    assert tasks[2]['updatedAt'] == now
+    
+    # Testing for mark-done
+    command = ['python3', MAIN_PATH, 'mark-done', 3]
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # The time when the task was updated
+    now = datetime.now().strftime()
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "Task ID 3 marked 'done' successfully\n" in output
+    
+    # Verify the task was updated
+    with open(TASKS_FILE, 'r') as f:
+        tasks = json.load(f)
+        
+    assert len(tasks) == 4
+    assert tasks[1]['id'] == 3
+    assert tasks[1]['status'] == 'done'
+    assert tasks[1]['updatedAt'] == now
