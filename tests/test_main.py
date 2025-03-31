@@ -112,6 +112,7 @@ def run_cli_command(command):
     result = subprocess.run(command, capture_output=True, text=True)
     return result.stdout, result.returncode
 
+# The following functions are tests for the 'add' command
 def test_add_task_1(setup_1):
     '''Test for adding a new task when the JSON file is empty'''
     command = ['python3', MAIN_PATH, 'add', '"Buy groceries"']
@@ -119,9 +120,12 @@ def test_add_task_1(setup_1):
     # Run the CLI command
     output, code = run_cli_command(command)
     
+    # Time at which the task is created
+    now = datetime.now().strftime()
+    
     # Verify the command ran successfully
     assert code == 0
-    assert "Task added successfully (ID: 1)" in output
+    assert "Task added successfully (ID: 1)\n" in output
     
     # Verify the task is added to the JSON file
     with open(TASKS_FILE, 'r') as f:
@@ -129,6 +133,8 @@ def test_add_task_1(setup_1):
     
     assert len(tasks) == 1
     assert tasks[-1]['description'] == 'Buy groceries'
+    assert tasks[-1]['createdAt'] == now
+    assert tasks[-1]['updatedAt'] == now
     
 def test_add_task_2(setup_2):
     '''Test for adding a new task when the JSON file is not empty'''
@@ -137,9 +143,12 @@ def test_add_task_2(setup_2):
     # Run the CLI command
     output, code = run_cli_command(command)
     
+    # Time at which the task is created
+    now = datetime.now().strftime()
+    
     # Verify the command ran successfully
     assert code == 0
-    assert "Task added successfully (ID: 3)" in output
+    assert "Task added successfully (ID: 3)\n" in output
     
     # Verify the task is added to the JSON file
     with open(TASKS_FILE, 'r') as f:
@@ -147,6 +156,8 @@ def test_add_task_2(setup_2):
         
     assert len(tasks) == 3
     assert tasks[-1]['description'] == 'Buy groceries'
+    assert tasks[-1]['createdAt'] == now
+    assert tasks[-1]['updatedAt'] == now
     
 def test_add_task_3(setup_3):
     '''Test for adding a new task when the JSON file is not empty and when there are already task IDs available'''
@@ -155,13 +166,110 @@ def test_add_task_3(setup_3):
     # Run the CLI command
     output, code = run_cli_command(command)
     
+    # Time at which the task is created
+    now = datetime.now().strftime()
+    
     # Verify the command ran successfully
     assert code == 0
-    assert "Task added successfully (ID: 2)" in output
+    assert "Task added successfully (ID: 2)\n" in output
     
     # Verify the task is added to the JSON file
     with open(TASKS_FILE, 'r') as f:
         tasks = json.load(f)
         
     assert len(tasks) == 5
+    assert tasks[1]['id'] == 2
     assert tasks[1]['description'] == 'Buy groceries'
+    assert tasks[1]['createdAt'] == now
+    assert tasks[1]['updatedAt'] == now
+
+# The following functions are tests for the 'update' command
+def test_update_task_1(setup_1):
+    '''Test for updating a task when there are no tasks added'''
+    command = ['python3', MAIN_PATH, 'update', 1, 'Buy groceries and cook dinner']
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "No tasks have been added yet\n" in output
+    
+def test_update_task_2(setup_3):
+    '''Test for updating a non-existing tasks in a non-empty tasks file'''
+    command = ['python3', MAIN_PATH, 'update', 5, 'Buy groceries and cook dinner']
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "Task ID 5 does not exist\n" in output
+    
+def test_update_task_3(setup_3):
+    '''Test for successfully updating a task in a non-empty tasks file'''
+    command = ['python3', MAIN_PATH, 'update', 4, 'Buy groceries and cook dinner']
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # The time at which the task is updated
+    now = datetime.now().strftime()
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "Task ID 4 successfully updated\n" in output
+    
+    # Verify the task is updated in the JSON file
+    with open(TASKS_FILE, 'r') as f:
+        tasks = json.load(f)
+        
+    assert len(tasks) == 4
+    assert tasks[2]['id'] == 4
+    assert tasks[2]['description'] == 'Buy groceries and cook dinner'
+    assert tasks[2]['updatedAt'] == now
+    
+# The following functions are tests for the 'delete' command
+def test_delete_task_1(setup_1):
+    '''Test for trying to delete a task when there are no tasks added'''
+    command = ['python3', MAIN_PATH, 'delete', 1]
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "No tasks have been added yet\n" in output
+    
+def test_delete_task_2(setup_3):
+    '''Test for trying to delete a non-existing task from a non-empty tasks file'''
+    command = ['python3', MAIN_PATH, 'delete', 5]
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "Task ID 5 does not exist\n" in output
+    
+def test_delete_task_3(setup_3):
+    '''Test for trying to delete an existing task'''
+    command = ['python3', MAIN_PATH, 'delete', 4]
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # The time at which the task is updated
+    now = datetime.now().strftime()
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "Task ID 4 successfully deleted\n" in output
+    
+    # Verify the task is deleted in the JSON file
+    with open(TASKS_FILE, 'r') as f:
+        tasks = json.load(f)
+        
+    assert len(tasks) == 3
+    assert not any(item['id'] == 4 for item in tasks)
+    
