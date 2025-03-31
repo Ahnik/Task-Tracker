@@ -218,7 +218,7 @@ def test_update_task_3(setup_3):
     now = datetime.now().strftime()
     
     # Verify the command run was unsuccessful
-    assert code != 0
+    assert code == 0
     assert "Task ID 4 successfully updated\n" in output
     
     # Verify the task is updated in the JSON file
@@ -261,7 +261,7 @@ def test_delete_task_3(setup_3):
     output, code = run_cli_command(command)
 
     # Verify the command run was unsuccessful
-    assert code != 0
+    assert code == 0
     assert "Task ID 4 successfully deleted\n" in output
     
     # Verify the task is deleted in the JSON file
@@ -319,7 +319,7 @@ def test_mark_2(setup_3):
 def test_mark_3(setup_3):
     '''Test for trying to mark an existing task'''
     # Testing for mark-in-progress
-    command = ['python3', MAIN_PATH, 'mark-in-progress', 4]
+    command = ['python3', MAIN_PATH, 'mark-in-progress', 1]
     
     # Run the CLI command
     output, code = run_cli_command(command)
@@ -328,17 +328,17 @@ def test_mark_3(setup_3):
     now = datetime.now().strftime()
     
     # Verify the command run was unsuccessful
-    assert code != 0
-    assert "Task ID 4 marked 'in-progress' successfully\n" in output
+    assert code == 0
+    assert "Task ID 1 marked 'in-progress' successfully\n" in output
     
     # Verify the task was updated
     with open(TASKS_FILE, 'r') as f:
         tasks = json.load(f)
         
     assert len(tasks) == 4
-    assert tasks[2]['id'] == 4
-    assert tasks[2]['status'] == 'in-progress'
-    assert tasks[2]['updatedAt'] == now
+    assert tasks[0]['id'] == 1
+    assert tasks[0]['status'] == 'in-progress'
+    assert tasks[0]['updatedAt'] == now
     
     # Testing for mark-done
     command = ['python3', MAIN_PATH, 'mark-done', 3]
@@ -350,7 +350,7 @@ def test_mark_3(setup_3):
     now = datetime.now().strftime()
     
     # Verify the command run was unsuccessful
-    assert code != 0
+    assert code == 0
     assert "Task ID 3 marked 'done' successfully\n" in output
     
     # Verify the task was updated
@@ -361,3 +361,35 @@ def test_mark_3(setup_3):
     assert tasks[1]['id'] == 3
     assert tasks[1]['status'] == 'done'
     assert tasks[1]['updatedAt'] == now
+    
+def test_mark_4(setup_3):
+    '''Test for trying to mark a task invalidly'''
+    # Testing for mark-in-progress trying to mark a task 'in-progress' that is already 'in-progress'
+    command = ['python3', MAIN_PATH, 'mark-in-progress', 3]
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "Task ID 3 is already marked 'in-progress'\n" in output
+    
+    # Testing for mark- trying to mark a task 'done' when it is already 'done'
+    command = ['python3', MAIN_PATH, 'mark-done', 4]
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "Task ID 4 is already marked 'done'\n" in output
+    
+    # Testing for mark-in-progress trying to mark a task marked 'done' as 'in-progress'
+    command = ['python3', MAIN_PATH, 'mark-in-progress', 4]
+    
+    # Run the CLI command
+    output, code = run_cli_command(command)
+    
+    # Verify the command run was unsuccessful
+    assert code != 0
+    assert "Task ID 4 is marked 'done'. It cannot be marked 'in-progress'.\n" in output
