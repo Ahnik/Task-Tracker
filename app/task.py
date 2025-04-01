@@ -56,40 +56,82 @@ class Task(object):
         
     def update_task(self, id, description):
         '''Function to update the description of a task'''
+        if not self.tasks:
+            return 1        # Return status code 1 to indicate that no task has been added
         for task in self.tasks:
             if task['id'] == id:
                 task['description'] = description
                 task['updatedAt'] = datetime.now().strftime()
-                return 0
-        return -1
+                return 0    # Return status code 0 to indicate success
+        return -1           # Return status code -1 to indicate no task with that task ID could be found
         
     def delete_task(self, id):
         '''Function to delete a task'''
+        if not self.tasks:
+            return 1        # Return status code 1 to indicate that no task has been added
         for task in self.tasks:
             if task['id'] == id:
                 self.tasks.remove(task)
-                return 0
-        return -1
+                return 0    # Return status code 0 to indicate success
+        return -1           # Return status code -1 to indicate no task with that task ID could be found
         
     def list_task(self):
         '''Funnction to list out all the tasks'''
+        if not self.tasks:
+            return 1        # Return status code 1 to indicate that no task has been added
         for task in self.tasks:
             print_task(task)
+        return 0            # Return status code 0 to indicate success
         
     def list_todo(self):
         '''Function to list out all the tasks marked "todo"'''
+        if not self.tasks:
+            return 1        # Return status code 1 to indicate that no task has been added
         for task in self.tasks:
             if task['status'] == 'todo':
                 print_task(task)
+        return 0            # Return status code 0 to indicate success
         
     def list_in_progress(self):
-        '''Function to list out all the tasks marked "in-progres"'''
+        '''Function to list out all the tasks marked "in-progress"'''
+        if not self.tasks:
+            return 1        # Return status code 1 to indicate that no task has been added
         for task in self.tasks:
             if task['status'] == 'in-progress':
                 print_task(task)
+        return 0            # Return status code 0 to indicate success
         
     def list_done(self):
         '''Function to list out all the tasks marked "done"'''
+        if not self.tasks:
+            return 1        # Return status code 1 to indicate that no task has been added
         for task in self.tasks:
             if task['status'] == 'done':
                 print_task(task)
+        return 0            # Return status code 0 to indicate success
+                
+    def mark_in_progress(self, id):
+        '''Function to mark the status of a certain task as "in-progress"'''
+        for task in self.tasks:
+            if task['id'] == id:
+                # Return status code -2 if the status is already set to "in-progress"
+                if task['status'] == 'in-progress':
+                    return -2
+                # Return status code -3 if the status is set to "done"
+                elif task['status'] == 'done':
+                    return -3
+                task['status'] = 'in-progress'
+                return 0    # Return status code 0 to indicate success
+        return -1       # Return status code -1 if no task with that ID exists
+                
+        
+    def mark_done(self, id):
+        '''Function to mark the status of a certain task as "done"'''
+        for task in self.tasks:
+            if task['id'] == id:
+                # Return status code -2 if the status is already set to "in-progress"
+                if task['status'] == 'done':
+                    return -2
+                task['status'] = 'done'
+                return 0
+        return -1       # Return status code -1 if no task with that ID exists
