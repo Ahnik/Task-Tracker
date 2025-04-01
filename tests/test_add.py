@@ -1,15 +1,14 @@
 import pytest
 import subprocess
 import os
-from pathlib import Path
 import json
 from datetime import datetime
 
 # Path to the tasks.json file
-TASKS_FILE = Path("../tasks.json").resolve()
+TASKS_FILE = os.path.abspath("../tasks.json")
 
 # Path to the main file
-MAIN_PATH =  Path("../app/main.py").resolve()
+MAIN_PATH =  os.path.abspath("../app/main.py")
 
 @pytest.fixture(scope="module")
 def setup_1():

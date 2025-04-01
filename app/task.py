@@ -1,7 +1,7 @@
 '''Module containing the implementation of the Task class'''
 from datetime import datetime
-from pathlib import Path
 import json
+import os.path as ospath
 from heapq import heappop
 from bisect import insort
 from helper import print_task
@@ -9,7 +9,7 @@ from helper import print_task
 class Task(object):
     '''Class for storing the contents of the tasks.json file and implementing the commands to be performed on the tasks'''
     # The constructor
-    def __init__(self, filename = Path("../tasks.json").resolve()):
+    def __init__(self, filename = ospath.abspath("../tasks.json")):
         '''An instance of this class will contain the data extracted from the tasks.json file'''
         self.filename = filename
         self.tasks = []             # Stores the task data

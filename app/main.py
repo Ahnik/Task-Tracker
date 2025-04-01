@@ -26,19 +26,19 @@ def main():
         if len(sys.argv) != 4:
             print("Usage: task-cli update <id> <description>")
             return -1
-        # Checking if the arguments are of the correct datatype
-        if not (isinstance(sys.argv[2], int) and isinstance(sys.argv[3], str)):
+        # We attempt to update the task
+        try:
+            status = tasks.update_task(int(sys.argv[2]), sys.argv[3])
+        except TypeError:
             print("Usage: task-cli update <int id> <str description>")
             return -1
         
-        # We attempt to update the task
-        status = tasks.update_task(sys.argv[2], sys.argv[3])
         if status == 1:
             print("No tasks have been added yet")
         elif status == -1:
-            print("Task ID %d does not exist"%(sys.argv[2]))
+            print("Task ID %d does not exist"%(int(sys.argv[2])))
         elif status == 0:
-            print("Task ID %d successfully updated"%(sys.argv[2]))
+            print("Task ID %d successfully updated"%(int(sys.argv[2])))
         
     elif sys.argv[1] == 'delete':
         '''If the command entered is "delete"'''
@@ -46,19 +46,19 @@ def main():
         if len(sys.argv) != 3:
             print("Usage: task-cli delete <id>")
             return -1
-        # Checking if the arguments are of the correct datatype
-        if not isinstance(sys.argv[2], int):
+        # We attempt to delete the task
+        try:
+            status = tasks.delete_task(int(sys.argv[2]))
+        except TypeError:
             print("Usage: task-cli delete <int id>")
             return -1
         
-        # We attempt to delete the task
-        status = tasks.delete_task(sys.argv[2])
         if status == 1:
             print("No tasks have been added yet")
         elif status == -1:
-            print("Task ID %d does not exist"%(sys.argv[2]))
+            print("Task ID %d does not exist"%(int(sys.argv[2])))
         elif status == 0:
-            print("Task ID %d successfully deleted"%(sys.argv[2]))  
+            print("Task ID %d successfully deleted"%(int(sys.argv[2])))
 
     tasks.save_tasks()  # The tasks are saved
     return 0            # Return status code for success
