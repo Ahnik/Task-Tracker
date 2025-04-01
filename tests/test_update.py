@@ -104,7 +104,7 @@ def test_update_task_3(setup_2):
     output, code = run_cli_command(command)
     
     # The time at which the task is updated
-    now = datetime.now().strftime()
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     # Verify the command run was unsuccessful
     assert code == 0

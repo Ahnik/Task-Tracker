@@ -30,7 +30,7 @@ class Task(object):
     def save_tasks(self):
         '''Save tasks to the JSON file'''
         with open(self.filename, 'w') as f:
-            json.dumps(self.tasks, f, indent=4)
+            json.dump(self.tasks, f, indent=4)
         
     def add_task(self, description):
         '''Function to add a task'''
@@ -45,8 +45,8 @@ class Task(object):
             'id': int(task_id),
             'description': str(description),
             'status': 'todo',
-            'createdAt': datetime.now().strftime(),
-            'updatedAt': datetime.now().strftime()
+            'createdAt': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'updatedAt': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         
         # The task is inserted into self.tasks sorted with respect to the task ID
@@ -59,7 +59,7 @@ class Task(object):
         for task in self.tasks:
             if task['id'] == id:
                 task['description'] = str(description)
-                task['updatedAt'] = datetime.now().strftime()
+                task['updatedAt'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 return 0    # Return status code 0 to indicate success
         return -1           # Return status code -1 to indicate no task with that task ID could be found
         
@@ -119,6 +119,7 @@ class Task(object):
                 elif task['status'] == 'done':
                     return -3
                 task['status'] = 'in-progress'
+                task['updatedAt'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 return 0    # Return status code 0 to indicate success
         return -1       # Return status code -1 if no task with that ID exists
                 
@@ -131,5 +132,6 @@ class Task(object):
                 if task['status'] == 'done':
                     return -2
                 task['status'] = 'done'
+                task['updatedAt'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 return 0
         return -1       # Return status code -1 if no task with that ID exists

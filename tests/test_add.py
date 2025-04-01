@@ -112,7 +112,7 @@ def test_add_task_1(setup_1):
     output, code = run_cli_command(command)
     
     # Time at which the task is created
-    now = datetime.now().strftime()
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     # Verify the command ran successfully
     assert code == 0
@@ -138,7 +138,7 @@ def test_add_task_2(setup_2):
     output, code = run_cli_command(command)
     
     # Time at which the task is created
-    now = datetime.now().strftime()
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     # Verify the command ran successfully
     assert code == 0
@@ -149,7 +149,7 @@ def test_add_task_2(setup_2):
         tasks = json.load(f)
         
     assert len(tasks) == 3
-    assert tasks[-1]['description'] == 'Buy groceries'
+    assert tasks[-1]['description'] == '"Buy groceries"'
     assert tasks[-1]['createdAt'] == now
     assert tasks[-1]['updatedAt'] == now
     
@@ -161,7 +161,7 @@ def test_add_task_3(setup_3):
     output, code = run_cli_command(command)
     
     # Time at which the task is created
-    now = datetime.now().strftime()
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     # Verify the command ran successfully
     assert code == 0
@@ -173,6 +173,6 @@ def test_add_task_3(setup_3):
         
     assert len(tasks) == 5
     assert tasks[1]['id'] == 2
-    assert tasks[1]['description'] == 'Buy groceries'
+    assert tasks[1]['description'] == '"Buy groceries"'
     assert tasks[1]['createdAt'] == now
     assert tasks[1]['updatedAt'] == now

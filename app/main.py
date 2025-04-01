@@ -58,3 +58,8 @@ def main():
             print("Task ID %d does not exist"%(sys.argv[2]))
         elif status == 0:
             print("Task ID %d successfully deleted"%(sys.argv[2]))  
+    tasks.save_tasks()  # The tasks are saved
+    return 0            # Return status code for success
+            
+if __name__ == '__main__':
+    main()
