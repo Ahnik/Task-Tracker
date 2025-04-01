@@ -9,7 +9,7 @@ from datetime import datetime
 TASKS_FILE = Path("../tasks.json").resolve()
 
 # Path to the main file
-MAIN_PATH = Path("../app/main.py").resolve()
+MAIN_PATH =  Path("../app/main.py").resolve()
 
 @pytest.fixture(scope="module")
 def setup_1():

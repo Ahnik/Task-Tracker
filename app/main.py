@@ -17,7 +17,8 @@ def main():
             print("Usage: task-cli add <description>")
             return -1
         # The task is added
-        tasks.add_task(sys.argv[2])
+        task_id = tasks.add_task(sys.argv[2])
+        print("Task added successfully (ID: %d)"%(int(task_id)))
         
     elif sys.argv[1] == 'update':
         '''If the command entered is "update"'''
@@ -58,6 +59,7 @@ def main():
             print("Task ID %d does not exist"%(sys.argv[2]))
         elif status == 0:
             print("Task ID %d successfully deleted"%(sys.argv[2]))  
+
     tasks.save_tasks()  # The tasks are saved
     return 0            # Return status code for success
             

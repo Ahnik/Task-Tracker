@@ -29,8 +29,10 @@ class Task(object):
                 
     def save_tasks(self):
         '''Save tasks to the JSON file'''
+        print(self.filename)
         with open(self.filename, 'w') as f:
             json.dump(self.tasks, f, indent=4)
+        print("JSON file saved")
         
     def add_task(self, description):
         '''Function to add a task'''
@@ -51,6 +53,8 @@ class Task(object):
         
         # The task is inserted into self.tasks sorted with respect to the task ID
         insort(self.tasks, task, key=lambda d: d['id'])        
+        
+        return task_id  # The task ID is returned
         
     def update_task(self, id, description):
         '''Function to update the description of a task'''
