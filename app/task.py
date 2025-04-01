@@ -1,29 +1,95 @@
 '''Module containing the implementation of the Task class'''
+from datetime import datetime
+from pathlib import Path
+import json
+from heapq import heappop
+from bisect import insort
+from helper import print_task
 
 class Task(object):
     '''Class for storing the contents of the tasks.json file and implementing the commands to be performed on the tasks'''
     # The constructor
-    def __init__(self, data):
+    def __init__(self, filename = Path("../tasks.json").resolve()):
         '''An instance of this class will contain the data extracted from the tasks.json file'''
-        self.data = data
+        self.filename = filename
+        self.tasks = []             # Stores the task data
+        self.available_ids = []     # Min-heap for storing deleted task IDs
+        self.next_id = 1            # Next available task ID if no deleted IDs exist
+        self.load_tasks()
     
+    def load_tasks(self):
+        '''Loads tasks from the JSON file'''
+        try:
+            with open(self.filename, 'r') as f:
+                self.tasks = list(json.load(f))
+                if self.tasks:
+                    self.next_id = max(task['id'] for task in self.tasks) + 1
+        except (FileNotFoundError, json.JSONDecodeError):
+            self.tasks = []
+            with open(self.filename, 'w') as f:
+                json.dump([], f, indent=4)
+                
+    def save_tasks(self):
+        '''Save tasks to the JSON file'''
+        with open(self.filename, 'w') as f:
+            json.dumps(self.tasks, f, indent=4)
+        
     def add_task(self, description):
         '''Function to add a task'''
+        if self.available_ids:
+            task_id = heappop(self.available_ids)     # Get the smallest available IDs
+        else:
+            task_id = self.next_id
+            self.next_id += 1
+            
+        # The task to be added
+        task = {
+            'id': task_id,
+            'description': description,
+            'status': 'todo',
+            'createdAt': datetime.now().strftime(),
+            'updatedAt': datetime.now().strftime()
+        }
+        
+        # The task is inserted into self.tasks sorted with respect to the task ID
+        insort(self.tasks, task, key=lambda d: d['id'])        
         
     def update_task(self, id, description):
         '''Function to update the description of a task'''
+        for task in self.tasks:
+            if task['id'] == id:
+                task['description'] = description
+                task['updatedAt'] = datetime.now().strftime()
+                return 0
+        return -1
         
     def delete_task(self, id):
         '''Function to delete a task'''
+        for task in self.tasks:
+            if task['id'] == id:
+                self.tasks.remove(task)
+                return 0
+        return -1
         
     def list_task(self):
         '''Funnction to list out all the tasks'''
+        for task in self.tasks:
+            print_task(task)
         
     def list_todo(self):
         '''Function to list out all the tasks marked "todo"'''
+        for task in self.tasks:
+            if task['status'] == 'todo':
+                print_task(task)
         
     def list_in_progress(self):
         '''Function to list out all the tasks marked "in-progres"'''
+        for task in self.tasks:
+            if task['status'] == 'in-progress':
+                print_task(task)
         
     def list_done(self):
         '''Function to list out all the tasks marked "done"'''
+        for task in self.tasks:
+            if task['status'] == 'done':
+                print_task(task)
