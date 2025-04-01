@@ -26,8 +26,6 @@ class Task(object):
                     self.next_id = max(task['id'] for task in self.tasks) + 1
         except (FileNotFoundError, json.JSONDecodeError):
             self.tasks = []
-            with open(self.filename, 'w') as f:
-                json.dump([], f, indent=4)
                 
     def save_tasks(self):
         '''Save tasks to the JSON file'''
@@ -44,8 +42,8 @@ class Task(object):
             
         # The task to be added
         task = {
-            'id': task_id,
-            'description': description,
+            'id': int(task_id),
+            'description': str(description),
             'status': 'todo',
             'createdAt': datetime.now().strftime(),
             'updatedAt': datetime.now().strftime()
@@ -60,7 +58,7 @@ class Task(object):
             return 1        # Return status code 1 to indicate that no task has been added
         for task in self.tasks:
             if task['id'] == id:
-                task['description'] = description
+                task['description'] = str(description)
                 task['updatedAt'] = datetime.now().strftime()
                 return 0    # Return status code 0 to indicate success
         return -1           # Return status code -1 to indicate no task with that task ID could be found
