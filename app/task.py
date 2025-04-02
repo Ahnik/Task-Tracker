@@ -24,18 +24,18 @@ class Task(object):
                 self.tasks = list(json.load(f))
                 if self.tasks:
                     self.next_id = max(task['id'] for task in self.tasks) + 1
-                # Add all the IDs that are available for use other than self.next_id
-                if self.tasks[-1]['id'] != len(self.tasks):
-                    available_ids = self.tasks[-1]['id'] - len(self.tasks)
-                    if self.tasks[0]['id'] > 1:
-                        for id in range(1, self.tasks[0]['id']):
-                            self.available_ids.append(id)
-                    i = 0
-                    while len(self.available_ids) < available_ids:
-                        if self.tasks[i+1]['id'] - self.tasks[i]['id'] > 1:
-                            for id in range(self.tasks[i]['id']+1, self.tasks[i+1]['id']):
+                    # Add all the IDs that are available for use other than self.next_id
+                    if self.tasks[-1]['id'] != len(self.tasks):
+                        available_ids = self.tasks[-1]['id'] - len(self.tasks)
+                        if self.tasks[0]['id'] > 1:
+                            for id in range(1, self.tasks[0]['id']):
                                 self.available_ids.append(id)
-                        i += 1
+                        i = 0
+                        while len(self.available_ids) < available_ids:
+                            if self.tasks[i+1]['id'] - self.tasks[i]['id'] > 1:
+                                for id in range(self.tasks[i]['id']+1, self.tasks[i+1]['id']):
+                                    self.available_ids.append(id)
+                            i += 1
         except (FileNotFoundError, json.JSONDecodeError):
             self.tasks = []
                 

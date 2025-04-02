@@ -81,6 +81,8 @@ def main():
             print("Task ID %d is already marked 'in-progress'"%(int(sys.argv[2])))
         elif status == -3:
             print("Task ID %d is marked 'done'. It cannot be marked 'in-progress'"%(int(sys.argv[2])))
+        elif status == 0:
+            print("Task ID %d marked 'in-progress' successfully"%(int(sys.argv[2])))
             
     elif sys.argv[1] == 'mark-done':
         '''If the command entered is "mark-done"'''
@@ -101,6 +103,29 @@ def main():
             print("Task ID %d does not exist"%(int(sys.argv[2])))
         elif status == -2:
             print("Task ID %d is already marked 'done'"%(int(sys.argv[2])))
+        elif status == 0:
+            print("Task ID %d marked 'done' successfully"%(int(sys.argv[2])))
+            
+    elif sys.argv[1] == 'list':
+        '''If the command entered is "list"'''
+        if len(sys.argv) == 2:
+            status = tasks.list_task()
+        elif len(sys.argv) == 3:
+            if sys.argv[2] == 'done':
+                status = tasks.list_done()
+            elif sys.argv[2] == 'in-progress':
+                status = tasks.list_in_progress()
+            elif sys.argv[2] == 'todo':
+                status = tasks.list_todo()
+            else:
+                print("Usage: task-cli list <optional: done/todo/in-progress")
+                return 2
+        else:
+            print("Usage: task-cli list <optional: done/todo/in-progress")
+            return 2
+        
+        if status == 1:
+            print("No tasks have been added yet")    
 
     tasks.save_tasks()  # The tasks are saved
     return 0            # Return status code for success
