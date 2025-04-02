@@ -41,10 +41,8 @@ class Task(object):
                 
     def save_tasks(self):
         '''Save tasks to the JSON file'''
-        print(self.filename)
         with open(self.filename, 'w') as f:
             json.dump(self.tasks, f, indent=4)
-        print("JSON file saved")
         
     def add_task(self, description):
         '''Function to add a task'''
@@ -127,6 +125,8 @@ class Task(object):
                 
     def mark_in_progress(self, id):
         '''Function to mark the status of a certain task as "in-progress"'''
+        if not self.tasks:
+            return 1        # Return status code 1 to indicate that no task has been added
         for task in self.tasks:
             if task['id'] == id:
                 # Return status code -2 if the status is already set to "in-progress"
@@ -143,9 +143,11 @@ class Task(object):
         
     def mark_done(self, id):
         '''Function to mark the status of a certain task as "done"'''
+        if not self.tasks:
+            return 1        # Return status code 1 to indicate that no task has been added
         for task in self.tasks:
             if task['id'] == id:
-                # Return status code -2 if the status is already set to "in-progress"
+                # Return status code -2 if the status is already set to "done"
                 if task['status'] == 'done':
                     return -2
                 task['status'] = 'done'

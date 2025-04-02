@@ -59,6 +59,48 @@ def main():
             print("Task ID %d does not exist"%(int(sys.argv[2])))
         elif status == 0:
             print("Task ID %d successfully deleted"%(int(sys.argv[2])))
+            
+    elif sys.argv[1] == 'mark-in-progress':
+        '''If the command entered is "mark-in-progress"'''
+        # If the command entered is invalid
+        if len(sys.argv) != 3:
+            print("Usage: task-cli mark-in-progress <id>")
+            return 2
+        # We attemp to mark the task as "in-progress"
+        try:
+            status = tasks.mark_in_progress(int(sys.argv[2]))
+        except TypeError:
+            print("Usage: task-cli mark-in-progress <int id>")
+            return 2
+        
+        if status == 1:
+            print("No tasks have been added yet")
+        elif status == -1:
+            print("Task ID %d does not exist"%(int(sys.argv[2])))
+        elif status == -2:
+            print("Task ID %d is already marked 'in-progress'"%(int(sys.argv[2])))
+        elif status == -3:
+            print("Task ID %d is marked 'done'. It cannot be marked 'in-progress'"%(int(sys.argv[2])))
+            
+    elif sys.argv[1] == 'mark-done':
+        '''If the command entered is "mark-done"'''
+        # If the command entered is invalid
+        if len(sys.argv) != 3:
+            print("Usage: task-cli mark-in-done <id>")
+            return 2
+        # We attemp to mark the task as "done"
+        try:
+            status = tasks.mark_done(int(sys.argv[2]))
+        except TypeError:
+            print("Usage: task-cli mark-done <int id>")
+            return 2
+        
+        if status == 1:
+            print("No tasks have been added yet")
+        elif status == -1:
+            print("Task ID %d does not exist"%(int(sys.argv[2])))
+        elif status == -2:
+            print("Task ID %d is already marked 'done'"%(int(sys.argv[2])))
 
     tasks.save_tasks()  # The tasks are saved
     return 0            # Return status code for success
