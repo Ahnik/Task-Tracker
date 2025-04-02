@@ -1,7 +1,7 @@
 '''Module containing the implementation of the Task class'''
 from datetime import datetime
 import json
-import os.path as ospath
+from pathlib import Path
 from heapq import heappop
 from bisect import insort
 from helper import print_task
@@ -9,7 +9,7 @@ from helper import print_task
 class Task(object):
     '''Class for storing the contents of the tasks.json file and implementing the commands to be performed on the tasks'''
     # The constructor
-    def __init__(self, filename = ospath.abspath("../tasks.json")):
+    def __init__(self, filename = Path(__file__).resolve().parent.parent / 'tasks.json'):
         '''An instance of this class will contain the data extracted from the tasks.json file'''
         self.filename = filename
         self.tasks = []             # Stores the task data
@@ -24,6 +24,18 @@ class Task(object):
                 self.tasks = list(json.load(f))
                 if self.tasks:
                     self.next_id = max(task['id'] for task in self.tasks) + 1
+                # Add all the IDs that are available for use other than self.next_id
+                if self.tasks[-1]['id'] != len(self.tasks):
+                    available_ids = self.tasks[-1]['id'] - len(self.tasks)
+                    if self.tasks[0]['id'] > 1:
+                        for id in range(1, self.tasks[0]['id']):
+                            self.available_ids.append(id)
+                    i = 0
+                    while len(self.available_ids) < available_ids:
+                        if self.tasks[i+1]['id'] - self.tasks[i]['id'] > 1:
+                            for id in range(self.tasks[i]['id']+1, self.tasks[i+1]['id']):
+                                self.available_ids.append(id)
+                        i += 1
         except (FileNotFoundError, json.JSONDecodeError):
             self.tasks = []
                 
@@ -74,6 +86,7 @@ class Task(object):
         for task in self.tasks:
             if task['id'] == id:
                 self.tasks.remove(task)
+                self.available_ids.append(id)
                 return 0    # Return status code 0 to indicate success
         return -1           # Return status code -1 to indicate no task with that task ID could be found
         

@@ -7,7 +7,7 @@ def main():
     if len(sys.argv) < 2:
         # If no command is executed
         print("Usage: task-cli <command> <arguments>")
-        return -1
+        return 2
     tasks = task.Task()     # An instance of the Task object is initialized
     
     if sys.argv[1] == 'add':
@@ -15,7 +15,7 @@ def main():
         # If the command entered is invalid
         if len(sys.argv) != 3:
             print("Usage: task-cli add <description>")
-            return -1
+            return 2
         # The task is added
         task_id = tasks.add_task(sys.argv[2])
         print("Task added successfully (ID: %d)"%(int(task_id)))
@@ -25,13 +25,13 @@ def main():
         # If the command entered is invalid
         if len(sys.argv) != 4:
             print("Usage: task-cli update <id> <description>")
-            return -1
+            return 2
         # We attempt to update the task
         try:
             status = tasks.update_task(int(sys.argv[2]), sys.argv[3])
         except TypeError:
             print("Usage: task-cli update <int id> <str description>")
-            return -1
+            return 2
         
         if status == 1:
             print("No tasks have been added yet")
@@ -45,13 +45,13 @@ def main():
         # If the command entered is invalid
         if len(sys.argv) != 3:
             print("Usage: task-cli delete <id>")
-            return -1
+            return 2
         # We attempt to delete the task
         try:
             status = tasks.delete_task(int(sys.argv[2]))
         except TypeError:
             print("Usage: task-cli delete <int id>")
-            return -1
+            return 2
         
         if status == 1:
             print("No tasks have been added yet")
