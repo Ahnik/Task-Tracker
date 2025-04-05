@@ -27,7 +27,7 @@ JSON file. The user should be able to: <br>
 <p>
 <h3>Adding a new task</h3>
 task-cli add "Buy groceries"<br>
-<h3>Output: Task added successfully (ID: 1)</h3>
+Output: Task added successfully (ID: 1)<br>
 
 <h3>Updating and deleting tasks</h3>
 task-cli update 1 "Buy groceries and cook dinner"<br>
