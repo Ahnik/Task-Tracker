@@ -1,3 +1,9 @@
+<h2>Installation on Linux</h2>
+<p>
+1. In order to install the CLI on Linux, run the install.sh script.<br>
+2. Make sure the user running the script has sudo permissions.<br>
+3. If the installation is successful, the CLI can be used with the name "task-cli".<br>
+</p>
 <h2>Requirements</h2>
 <p>
 The task tracker application should run from the command line, accept user actions and inputs as arguments, and store the tasks in a 
