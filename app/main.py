@@ -29,7 +29,7 @@ def main():
         # We attempt to update the task
         try:
             status = tasks.update_task(int(sys.argv[2]), sys.argv[3])
-        except TypeError:
+        except (TypeError, ValueError):
             print("Usage: task-cli update <int id> <str description>")
             return 2
         
@@ -49,7 +49,7 @@ def main():
         # We attempt to delete the task
         try:
             status = tasks.delete_task(int(sys.argv[2]))
-        except TypeError:
+        except (TypeError, ValueError):
             print("Usage: task-cli delete <int id>")
             return 2
         
@@ -69,7 +69,7 @@ def main():
         # We attemp to mark the task as "in-progress"
         try:
             status = tasks.mark_in_progress(int(sys.argv[2]))
-        except TypeError:
+        except (TypeError, ValueError):
             print("Usage: task-cli mark-in-progress <int id>")
             return 2
         
@@ -93,7 +93,7 @@ def main():
         # We attemp to mark the task as "done"
         try:
             status = tasks.mark_done(int(sys.argv[2]))
-        except TypeError:
+        except (TypeError, ValueError):
             print("Usage: task-cli mark-done <int id>")
             return 2
         
@@ -126,6 +126,11 @@ def main():
         
         if status == 1:
             print("No tasks have been added yet")    
+    
+    else:
+        '''Handling all other cases'''
+        print("Usage: task-cli <command> <arguments>")
+        return 2
 
     tasks.save_tasks()  # The tasks are saved
     return 0            # Return status code for success
